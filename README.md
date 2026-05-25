@@ -1,95 +1,99 @@
-# PRIS2
-Ensayo
-PARCIALMENTE CORRECTO
-0,25/2
-Calificación: 0,25 de 2 puntos posibles
-Identifique un escenario técnico donde sea necesario aplicar el Patrón Strategy. ¿Qué beneficio aporta este patrón en términos de cumplimiento del principio Open/Closed (SOLID) frente a una estructura basada en condicionales múltiples (switch/if)?
+1. ¿Cuál es la principal diferencia entre una arquitectura SOA y una arquitectura de microservicios? 
 
-Respuesta
-En el escenario dado creo que lo mejor seria cuando estamos en un proyecto donde tengamos un montón de métodos que se llaman entre si, así nos aseguramos que cada método pueda llegar/mandar la información necesaria sin necesidad excesiva de funciones.
+2. Explique por qué el Enterprise Service Bus (ESB) puede convertirse en un riesgo crítico dentro de una arquitectura SOA. 
 
-El Patrón Strategy nos ayuda ver mejor el flujo del proyecto que si usáramos una estructura en condiciones, así si incluso un equipo externo se le asignara el código del proyecto, podría empezar a trabajar en el día uno ya que no seria tan complejo de seguir/entenderlo
+3. ¿Qué ventajas aporta la descentralización de datos en microservicios frente a una base de datos compartida? 
 
-El escenario es el de algoritmos intercambiables. El beneficio es que se pueden añadir nuevos comportamientos sin modificar la clase original (Open/Closed), eliminando el Smell de Switch Statements.
+4. Defina el concepto de resiliencia en APIs REST y relacione su importancia con las falsas suposiciones sobre redes distribuidas. 
 
-BAJAR PUNTOS
+5. Explique qué es el Model Context Protocol (MCP) y cómo facilita la interacción entre LLMs y herramientas externas. 
 
-No mencionar el principio Open/Closed o confundir el patrón con una Factory.
+6. Diferencie entre “Tool Use” y un servidor MCP dentro de una arquitectura basada en IA. 
 
-Pregunta 2
-2
-Ensayo
-PARCIALMENTE CORRECTO
-1,5/2
-Calificación: 1,5 de 2 puntos posibles
-Metodologías y Vibe Coding (IA)
+7. ¿Por qué la Ingeniería Inversa es fundamental para la interoperabilidad y el análisis de malware? 
 
-Explique cómo influye el uso de herramientas de IA generativa (Vibe Coding) en la aparición de Deuda Técnica en un proyecto gestionado con Scrum. ¿Qué acciones específicas debe realizar el ingeniero de software para validar que el código generado no comprometa la mantenibilidad a largo plazo?
+8. Compare Ingeniería Directa e Ingeniería Inversa indicando sus diferencias en el flujo de abstracción. 
 
-Respuesta
-Si el Vibe Coding no se actúa como es debido en un proyecto gestionado con Scrum, provocaría una parada masiva en el backlog, ya que el equipo tendría que mover todo item con del Sprint backlog con deuda técnica al siguiente Sprint, rompiendo el tiempo programado de esos Sprint, ya que no cumpliría el principio DD (Done), donde un item se considera echo, si solo si ,pasan sus test/cobertura y cumple con los requisitos dados en el HU (Historia de usuario).
+9. ¿Qué papel cumple el estándar ISO 19506 (KDM) en la gobernanza de sistemas legacy? 
 
-Para que esto no pase en un principio, el ingeniero debe de hacer test que presente el nivel de calidad y lo que se quiere de dicho ítem, así la ia se basaría en ellas en vez de generar código chunk o peor. También ayudan bastante aplicar técnicas de refactorización o estructuras de carpetas (MVC, MVVM..etc).
+10. Explique cómo el derecho a la interoperabilidad limita legalmente ciertas restricciones impuestas por contratos EULA. 
 
-Mencionar que la IA puede generar código que "funciona" pero es dificil de entender (Carga Cognitiva). Debe proponer Code Reviews humanos y paso de Linters/analizadores estáticos.
+11. ¿Cuál es el objetivo principal de la norma ISO/IEC 27034 en la securización de aplicaciones? 
 
-BAJA PUNTOS:
+12. Defina el concepto de ONF (Organizational Normative Framework) y explique su importancia en el ciclo de vida seguro del software. 
 
-Decir solo que "la IA se equivoca" sin hablar de mantenibilidad o deuda técnica
+13. Relacione el S-SDLC con OWASP Top 10 y explique cómo contribuye a reducir vulnerabilidades críticas. 
 
-Pregunta 3
-3
-Ensayo
-PARCIALMENTE CORRECTO
-1/2
-Calificación: 1 de 2 puntos posibles
-Defina el concepto de Inmutabilidad del Contenedor dentro de una arquitectura de Despliegue Continuo (CD). ¿Por qué se considera una mala práctica realizar cambios manuales dentro de un contenedor en ejecución en el entorno de producción?
+14. Compare las herramientas SAST y DAST indicando ventajas, desventajas y complementariedad dentro de DevSecOps. 
 
-Respuesta
-Por que antes de cualquier cambio a un contenedor, debe de pasar unos series de test y evaluaciones, es decir el CI (Despliegue integrado), sino uno no sabría lo que se cambia o modifica cumple con los requisitos de calidad de ese contenedor, más aun cuando esta en ejecución, eso provocaría fallos y nuestros clientes no les gastaría experimentarlos.
+15. Explique la filosofía “Docs as Code” y sus ventajas frente a documentación tradicional basada en Word. 
 
-Por eso antes se pasa el contenedor a un CI y del CI pasa al CD, con ello se verifica que ese contenedor cumple con los test  y requisitos.
+16. ¿Qué relación existe entre la mantenibilidad definida en ISO 25010 y el llamado “bus factor”? 
 
-Por eso se llama Inmutabilidad del Contenedor, que no debe jamás ser cambiado cuando el contenedor esta en ejecución en entorno de producción.
+17. Describa cómo OpenAPI y Swagger funcionan como contrato técnico entre servicios y equipos de desarrollo. 
 
-Debe explicar que la inmutabilidad asegura que el contenedor sea igual en todos los entornos. Cambiar algo a mano rompe la paridad de entornos y el despliegue deja de ser predecible
+18. Explique cómo TDD mejora las subcaracterísticas de Testabilidad y Modificabilidad definidas en ISO/IEC 25010. 
 
-BAJA PUNTOS
+19. ¿Por qué el uso de IA generativa en desarrollo software puede incrementar la deuda técnica si no existen mecanismos de validación? 
 
-No mencionar la palabra "paridad de entornos" o "reproducibilidad".
+20. Relacione las métricas CK (como CBO o LCOM) con la mantenibilidad y calidad del software según ISO/IEC 25010. 
+1. **Diferencia entre SOA y microservicios**
+   SOA utiliza un bus central (ESB) para coordinar servicios y transformar datos, mientras que los microservicios eliminan esa dependencia y cada servicio funciona de forma independiente con su propia lógica y base de datos. Los microservicios usan normalmente REST/JSON o gRPC y favorecen la escalabilidad y autonomía de equipos. 
 
-Pregunta 4
-4
-Ensayo
-PARCIALMENTE CORRECTO
-1,5/2
-Calificación: 1,5 de 2 puntos posibles
-Relacione el indicador CBO (Acoplamiento entre Objetos) con la subcaracterística de Modificabilidad de la norma ISO 25010. ¿Qué impacto técnico tiene un CBO elevado cuando se requiere realizar un cambio en un módulo central del sistema?
+2. **Riesgo crítico del ESB en SOA**
+   El ESB puede convertirse en un punto único de fallo. Si el bus central deja de funcionar, toda la organización puede quedar paralizada. Además, concentra demasiada lógica de negocio, generando acoplamiento de infraestructura. 
 
-Respuesta
-Si en un proyecto software tenemos elevados indicadores de CBO, no nos dejaría con mucha libertad de modificación de funcionalidades/métodos, ya que significa que cada funcionalidad dependería de otra funcionalidad. Haciendo que cada vez que se necesite modificar un método o parecido, habría que cambiarlo al que hace referencia o se usa en otros métodos, aumentando significativamente el coste del mantenimiento. Cuando menos CBO tengamos mejor, significaría que en nuestro proyecto sus funcionalidades no dependen demasiado de otras funcionalidades .
+3. **Ventajas de la descentralización de datos**
+   Cada microservicio posee su propia base de datos, lo que reduce el acoplamiento entre módulos y permite modificar servicios sin afectar al resto. También mejora la escalabilidad y la independencia tecnológica. 
 
-Debe explicar que un CBO alto significa que las clases dependen mucho de otras. Esto reduce la Modificabilidad porque un cambio pequeño causa un "efecto dominó" (regresión).
+4. **Resiliencia en APIs REST**
+   La resiliencia consiste en diseñar APIs capaces de soportar fallos de red, latencia o cambios de infraestructura sin colapsar. Surge porque muchas veces se asume erróneamente que la red es fiable, rápida y segura, cuando realmente no lo es. 
 
+5. **¿Qué es MCP?**
+   El Model Context Protocol (MCP) es un estándar que permite que un modelo de lenguaje (LLM) interactúe con herramientas externas de forma estructurada. Gracias a MCP, un LLM puede leer información, ejecutar acciones y escribir resultados usando un protocolo común. 
 
+6. **Tool Use vs servidor MCP**
+   El Tool Use es la capacidad puntual de un LLM para utilizar herramientas concretas. Un servidor MCP, en cambio, es una infraestructura completa que organiza y estandariza la comunicación entre el modelo y múltiples herramientas externas. 
 
-Bajar puntos:
+7. **Importancia de la Ingeniería Inversa**
+   La Ingeniería Inversa permite analizar sistemas ya construidos para comprender su funcionamiento interno. Es clave para lograr interoperabilidad entre sistemas cerrados, recuperar software legacy y analizar malware como Stuxnet. 
 
-Confundir Acoplamiento con Cohesión.
+8. **Ingeniería Directa vs Ingeniería Inversa**
+   La Ingeniería Directa parte de requisitos y diseños abstractos para crear software. La Ingeniería Inversa hace el proceso contrario: parte de un sistema ya implementado y lo descompone para descubrir su diseño y funcionamiento. 
 
-Pregunta 5
-5
-Ensayo
-PARCIALMENTE CORRECTO
-0,75/2
-Calificación: 0,75 de 2 puntos posibles
-Defina técnicamente qué es una Costura (Seam) según Michael Feathers y explique su importancia en el Algoritmo de Cambio Seguro. ¿Por qué es obligatorio realizar Tests de Caracterización antes de proceder a la ruptura de dependencias en un sistema heredado?
+9. **Función de ISO 19506 (KDM)**
+   ISO 19506 define un estándar para representar el conocimiento de sistemas software legacy. Facilita la gobernanza TI, el análisis de dependencias y la modernización de sistemas antiguos. 
 
-Respuesta
-Los test de Caracterización, son test que comprueban lo básico del sistema en ese momento(Tanto para lo bueno como lo malo), haciendo que cualquier modificación o agregación al método , siga haciendo su función principal. Con ello podemos refactorizar sin problemas nuestro proyecto software así pudiendo aplicar el Algoritmo de Cambio Seguro, ya que este va cambiado poco a poco el método original.
+10. **Derecho a la interoperabilidad y EULA**
+    La ley permite realizar ingeniería inversa cuando es necesaria para garantizar interoperabilidad entre sistemas. Por ello, algunas restricciones impuestas por contratos EULA no pueden prevalecer sobre el derecho legal reconocido. 
 
-Costura: Lugar donde se puede alterar el comportamiento sin editar el código (ej. una interfaz). Tests Caract: Sirven para "congelar" el comportamiento actual y asegurar que no rompemos nada (regresión).
+11. **Objetivo de ISO/IEC 27034**
+    La norma ISO/IEC 27034 busca integrar la seguridad durante todo el ciclo de vida del software, proporcionando directrices para desarrollar aplicaciones seguras desde el diseño hasta el mantenimiento. 
 
-BAJA PUNTOS
+12. **¿Qué es ONF?**
+    El Organizational Normative Framework (ONF) es un marco organizativo que reúne políticas, reglas y controles de seguridad aplicables al desarrollo software. Su función es garantizar que la seguridad se mantenga durante todo el ciclo de vida de la aplicación. 
 
-Decir que una costura es "un comentario" o que los tests de caracterización son para buscar bugs nuevos (son para proteger lo que ya hay).
+13. **Relación entre S-SDLC y OWASP Top 10**
+    El Secure Software Development Life Cycle incorpora controles de seguridad en cada fase del desarrollo. Esto ayuda a prevenir vulnerabilidades descritas en OWASP Top 10, como inyecciones SQL o fallos de autenticación. 
+
+14. **SAST vs DAST**
+    SAST analiza el código fuente de forma estática antes de ejecutar la aplicación, detectando errores tempranos. DAST analiza la aplicación en ejecución simulando ataques reales. SAST encuentra fallos internos y DAST detecta vulnerabilidades en tiempo real; ambos son complementarios en DevSecOps. 
+
+15. **Filosofía Docs as Code**
+    Docs as Code propone tratar la documentación igual que el código fuente, utilizando Git, Markdown, pull requests y CI/CD. Esto mejora la trazabilidad, automatización y colaboración frente a documentos Word tradicionales. 
+
+16. **Mantenibilidad y bus factor**
+    La mantenibilidad en ISO 25010 mide la facilidad para modificar y comprender un sistema. El “bus factor” representa el riesgo de que el conocimiento dependa de pocas personas; buena documentación y diseño reducen ese riesgo. 
+
+17. **OpenAPI y Swagger como contrato técnico**
+    OpenAPI y Swagger definen formalmente cómo funciona una API, especificando endpoints, parámetros y respuestas. Actúan como contrato técnico entre equipos, evitando inconsistencias e incompatibilidades. 
+
+18. **Cómo TDD mejora ISO 25010**
+    TDD obliga a escribir pruebas antes del código, lo que genera software más modular y desacoplado. Esto mejora la testabilidad, analizabilidad y modificabilidad definidas en ISO/IEC 25010. 
+
+19. **IA generativa y deuda técnica**
+    La IA puede generar código funcional pero difícil de entender o mantener, aumentando la carga cognitiva y la deuda técnica. Por ello, son necesarios tests, code reviews humanos y analizadores estáticos para validar calidad y mantenibilidad. 
+
+20. **CK Metrics e ISO 25010**
+    Las métricas CK permiten medir atributos internos del software. Un CBO alto implica demasiado acoplamiento y reduce la modificabilidad; un LCOM alto indica baja cohesión y dificulta la mantenibilidad según ISO/IEC 25010. 
+
