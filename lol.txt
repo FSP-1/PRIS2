@@ -1,0 +1,30 @@
+sergiomcp@sergiomcp-Standard-PC-Q35-ICH9-2009:~/Documents/ms-365-mcp-server-main$ npm run inspector
+
+> @softeria/ms-365-mcp-server@0.0.0-development inspector
+> npx @modelcontextprotocol/inspector tsx src/index.ts
+
+Starting MCP inspector...
+⚙️ Proxy server listening on localhost:6277
+🔑 Session token: 24f0907973c8cfc513517b4ee48b1250517432e253cb8314f279ec535e2cae5d
+   Use this token to authenticate requests or set DANGEROUSLY_OMIT_AUTH=true to disable auth
+
+🚀 MCP Inspector is up and running at:
+   http://localhost:6274/?MCP_PROXY_AUTH_TOKEN=24f0907973c8cfc513517b4ee48b1250517432e253cb8314f279ec535e2cae5d
+
+🌐 Opening browser...
+New STDIO connection request
+Query parameters: {"command":"tsx","args":"src/index.ts","env":"{\"HOME\":\"/home/sergiomcp\",\"LOGNAME\":\"sergiomcp\",\"PATH\":\"/home/sergiomcp/.npm/_npx/5a9d879542beca3a/node_modules/.bin:/home/sergiomcp/Documents/ms-365-mcp-server-main/node_modules/.bin:/home/sergiomcp/Documents/node_modules/.bin:/home/sergiomcp/node_modules/.bin:/home/node_modules/.bin:/node_modules/.bin:/home/sergiomcp/Documents/ms-365-mcp-server-main/node_modules/npm/node_modules/@npmcli/run-script/lib/node-gyp-bin:/home/sergiomcp/Documents/ms-365-mcp-server-main/node_modules/.bin:/home/sergiomcp/Documents/node_modules/.bin:/home/sergiomcp/node_modules/.bin:/home/node_modules/.bin:/node_modules/.bin:/home/sergiomcp/.nvm/versions/node/v24.16.0/lib/node_modules/npm/node_modules/@npmcli/run-script/lib/node-gyp-bin:/home/sergiomcp/.nvm/versions/node/v24.16.0/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/usr/games:/usr/local/games:/snap/bin:/snap/bin\",\"SHELL\":\"/bin/bash\",\"TERM\":\"xterm-256color\",\"USER\":\"sergiomcp\"}","transportType":"stdio"}
+STDIO transport: command=/home/sergiomcp/Documents/ms-365-mcp-server-main/node_modules/.bin/tsx, args=src/index.ts
+Created client transport
+Created server transport
+Received POST message for sessionId fcb45d5c-a7fd-4e9c-abc2-a39d1f82c768
+Received POST message for sessionId fcb45d5c-a7fd-4e9c-abc2-a39d1f82c768
+New StreamableHttp connection request
+Query parameters: {"url":"http://10.10.10.104:3000/mcp","transportType":"streamable-http"}
+Created StreamableHttp client transport
+Client <-> Proxy  sessionId: 5a62f7ce-ab9d-4492-a611-6c95dcc011ef
+Error from MCP server: StreamableHTTPError: Streamable HTTP error: Error POSTing to endpoint: {"error":"invalid_token","error_description":"Missing or malformed Authorization header"}
+    at StreamableHTTPClientTransport.send (file:///home/sergiomcp/.npm/_npx/5a9d879542beca3a/node_modules/@modelcontextprotocol/sdk/dist/esm/client/streamableHttp.js:364:23)
+    at process.processTicksAndRejections (node:internal/process/task_queues:104:5) {
+  code: 401
+}, el server sergiomcp@sergiomcp-Standard-PC-Q35-ICH9-2009:~/Documents/ms-365-mcp-server-main$ npx -y @softeria/ms-365-mcp-server --http --org-mode
