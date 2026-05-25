@@ -97,3 +97,5 @@
 20. **CK Metrics e ISO 25010**
     Las métricas CK permiten medir atributos internos del software. Un CBO alto implica demasiado acoplamiento y reduce la modificabilidad; un LCOM alto indica baja cohesión y dificulta la mantenibilidad según ISO/IEC 25010. 
 
+
+Identifique un escenario técnico donde sea necesario aplicar el Patrón Strategy. ¿Qué beneficio aporta este patrón en términos de cumplimiento del principio Open/Closed (SOLID) frente a una estructura basada en condicionales múltiples (switch/if)? explicalo brevemente como estudiante universitario y no uses enlaces solo con tu informacion
