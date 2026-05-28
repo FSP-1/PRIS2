@@ -1,19 +1,58 @@
-ext_serper@medgaz.com
-You cannot access this right now
-Your sign-in was successful but does not meet the criteria to access this resource. For example, you might be signing in from a browser, app, or location that is restricted by your admin.
-More details
-Troubleshooting details
-If you contact your administrator, send this info to them.
-Copy info to clipboard
-Error Code: 53003
-Request Id: 6f3d0f71-3935-4758-b766-cbe832ca2e00
-Correlation Id: 162a7853-50cd-4afc-bcdd-f9c718d6c1cd
-Timestamp: 2026-05-26T09:54:13.739Z
-App name: Outlook MCP LLM
-App id: d76fd0b7-8260-442c-8ab3-1983c64f8622
-IP address: 195.53.100.36
-Device identifier: Not available
-Device platform: Linux
-Device state: Unregistered
-Flag sign-in errors for review: Enable flagging
-If you plan on getting help for this problem, enable flagging and try to reproduce the error within 20 minutes. Flagged events make diagnostics available and are raised to admin attention.
+@startuml
+title MCP + OpenWeb + OAuth Architecture
+
+' === CLIENT ===
+node "Cliente (Usuario)\n192.168.1.x\n internet" {
+}
+
+' === INTERNAL NETWORK ===
+node "Red Interna Empresa\n192.168.2.0/24\n in Internet" {
+
+  node "OpenWeb\n192.168.2.15:8080" as OPENWEB
+  
+  node "NGINX Proxy\n192.168.2.15:443 (HTTPS)\n→ 3001 interno" as NGINX
+}
+
+' === EXTERNAL NETWORK ===
+node "Red Internet\n10.10.10.0/24" {
+
+  node "MCP Server\n10.10.10.104:3000\n Internet" as MCP
+
+}
+
+' === MICROSOFT CLOUD ===
+cloud "Microsoft OAuth / Graph API\nlogin.microsoftonline.com" as MS
+
+' ==== FLOWS ====
+
+' 1. Usuario abre OpenWeb
+Cliente --> OPENWEB : HTTP\nOpen UI
+
+' 2. OpenWeb llama MCP vía proxy
+OPENWEB --> NGINX : HTTPS /mcp
+
+NGINX --> MCP : HTTP proxy_pass
+
+' 3. OAuth start (browser)
+Cliente --> NGINX : HTTPS /authorize
+
+NGINX --> MCP : /authorize
+
+' 4. MCP redirige a Microsoft
+MCP --> Cliente : 302 Redirect\n→ login.microsoftonline.com
+
+Cliente --> MS : Login + Consent
+
+' 5. Microsoft devuelve al callback
+MS --> Cliente : Redirect\n→ 192.168.2.15:8080/callback
+
+Cliente --> OPENWEB : OAuth callback
+
+' 6. OpenWeb usa MCP ya autenticado
+OPENWEB --> NGINX : /mcp API calls
+
+NGINX --> MCP
+
+MCP --> MS : Graph API (Internet)
+
+@enduml
