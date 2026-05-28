@@ -1,156 +1,18 @@
-Date
-2026-05-26T09:49:19Z
-Request ID
-5768fb68-b841-4eaf-b506-ff456c502800
-Correlation ID
-29016864-c721-4983-badb-f3c6a7c7f291
-Is Agent
-No
-Agent type
-Not Agentic
-Agent subject type
-Not Agentic
-Authentication requirement
-Multifactor authentication
-Status
-Failure
-Continuous access evaluation
-No
-Sign-in error code
-53003
-Failure reason
-Access has been blocked by Conditional Access policies. The access policy does not allow token issuance.
-Additional details
-If this is unexpected, see the conditional access policy that applied to this request in the Azure Portal.
-Troubleshoot with AI
-Troubleshoot event
-Launch the Sign-in Diagnostic.
-User
-Sergio Pereyra
-User principal name
-ext_serper@medgaz.com
-User ID
-7d717b8d-e1e7-439a-9236-f5e0f89149f5
-Sign-in identifier
-Session ID
-00504aca-72c5-3e53-eafe-e3563e88ddeb
-App owner tenant ID
-26993cfd-47e1-4636-9257-ca607c192da1
-Resource owner tenant ID
-f8cdef31-a31e-4b4a-93e4-5f571e91255a
-User type
-Member
-Cross tenant access type
-None
-Application
-Outlook MCP LLM
-Application ID
-d76fd0b7-8260-442c-8ab3-1983c64f8622
-Resource
-Microsoft Graph
-Resource ID
-00000003-0000-0000-c000-000000000000
-Resource tenant ID
-26993cfd-47e1-4636-9257-ca607c192da1
-Home tenant ID
-26993cfd-47e1-4636-9257-ca607c192da1
-Home tenant name
-Client app
-Mobile Apps and Desktop clients
-Client credential type
-None
-Service principal ID
-85ab9510-e12e-4cec-9d94-166f5f1a1610
-Original transfer method
-None
-Token protection - Sign In Session
-Unbound (Status code: 1002)
-Service principal name
-Resource service principal ID
-b8c1357e-7122-41df-9545-c1a54f1bee42
-Unique token identifier
-aPtoV0G4r061Bv9FbFAoAA
-Token issuer type
-Microsoft Entra ID
-Token issuer name
-Incoming token type
-None
-Authentication protocol
-None
-Latency
-101 ms
-Flagged for review
-User agent
-Mozilla/5.0 (X11; Ubuntu; Linux x86_64; rv:147.0) Gecko/20100101 Firefox/147.0 Authentication policies applied
-Conditional Access
-2026-05-26T09:49:19Z
-Previously satisfied
-Yes
-First factor requirement satisfied by claim in the token
-2026-05-26T09:49:19Z
-Previously satisfied
-Yes
-MFA requirement satisfied by claim in the token
-Policy: All - Users - Conditional Access - Block Operating System
-Policy state: Enabled
-Result: Failure
-Assignments
-User
-Sergio Pereyra
- Matched
-Group assignment
-Resource
-Microsoft Graph
- Matched
-Conditions
-Device platform
-Linux
- Matched
-Network (formerly location)
-Almeria, ES
- Not configured
-IP seen by Microsoft Entra ID
-195.53.100.36
- Not configured
-Client app
-Mobile Apps and Desktop clients
- Not configured
-Device
-Unknown
- Not configured
-User risk
- Not configured
-Authentication flows
- Not configured
-Access controls
-Grant Controls
- Block
-Block
-Session Controls
- Not configured
-Not set All - Users - Conditional Access - Block Operating System
-Block
-Failure
-All - Users - Conditional Access - Require MFA
-Mfa
-SignInFrequency
-Success
-Cloud Admins Conditional Access
-Mfa
-SignInFrequency
-Not applied
-All - Users - Conditional Access - Allow Android managed
-Mfa
-SignInFrequency
-Not applied
-All - Users - Conditional Access - Windows devices compliant required
-Mfa, RequireCompliantDevice, RequireDomainJoinedDevice
-SignInFrequency
-Not applied
-Block legacy authentication
-Block
-Not applied
-All - Users - Conditional Access - Android devices compliant required
-Mfa, RequireCompliantDevice
-SignInFrequency
-Not applied
+server {
+    listen 3000;
+
+    location / {
+        proxy_pass http://10.10.10.104:3000;
+
+        proxy_http_version 1.1;
+        proxy_set_header Host $host;
+        proxy_set_header X-Real-IP $remote_addr;
+        proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+
+        # importante para OAuth / redirects
+        proxy_set_header X-Forwarded-Proto $scheme;
+
+        # evita problemas de keepalive
+        proxy_set_header Connection "";
+    }
+}
