@@ -40,3 +40,10 @@ server {
         proxy_set_header Connection "upgrade";
     }
 }
+npx @softeria/ms-365-mcp-server \
+  --http 3000 \
+  --public-url https://mcp.tudominio.com \
+  --org-mode
+
+ 5. OpenWeb config
+https://mcp.tudominio.com/mcp
