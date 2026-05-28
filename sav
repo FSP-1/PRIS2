@@ -1,120 +1,73 @@
 @startuml
-title Enterprise MCP + OpenWebUI + vLLM + Microsoft OAuth
 
-skinparam backgroundColor #ffffff
+title MCP + OpenWebUI + OAuth Architecture
+
 skinparam componentStyle rectangle
 skinparam shadowing false
-skinparam ArrowColor #2b2b2b
-skinparam packageStyle rectangle
 
-actor "Usuario\nBrowser corporativo" as USER
+actor User
 
-package "Red Interna Empresa (192.168.2.0/24)" {
+package "Internal Network (192.168.2.0/24)" {
 
   node "Open WebUI\n192.168.2.15:8080" as OPENWEB
 
-  node "vLLM Server\nLLM local" as VLLM
+  node "vLLM Server\nLocal LLM" as VLLM
 
-  node "NGINX Reverse Proxy\n192.168.2.15:443\nHTTPS + OAuth Callback" as NGINX
+  node "NGINX Reverse Proxy\n192.168.2.15:443" as NGINX
 }
 
-package "Red Servicios / DMZ (10.10.10.0/24)" {
+package "Service Network (10.10.10.0/24)" {
 
-  node "MS-365 MCP Server\n10.10.10.104:3000\nStreamable HTTP MCP" as MCP
+  node "MS-365 MCP Server\n10.10.10.104:3000" as MCP
 }
 
-cloud "Microsoft Entra ID\nOAuth 2.1" as ENTRA
+cloud "Microsoft Entra ID" as ENTRA
 
-cloud "Microsoft Graph API\nOutlook / Calendar / SharePoint" as GRAPH
+cloud "Microsoft Graph API" as GRAPH
 
-' =====================
-' USER FLOW
-' =====================
+User --> OPENWEB : HTTPS Chat
 
-USER --> OPENWEB :
-HTTPS\nChat UI
+OPENWEB --> VLLM : Prompt + Tool Calling
 
-OPENWEB --> VLLM :
-OpenAI-compatible API\nTool Calling
+VLLM --> OPENWEB : Tool Request
 
-VLLM --> OPENWEB :
-Tool Request
+OPENWEB --> NGINX : HTTPS /mcp
 
-' =====================
-' MCP FLOW
-' =====================
+NGINX --> MCP : HTTP proxy_pass
 
-OPENWEB --> NGINX :
-HTTPS /mcp
+MCP --> User : OAuth Redirect
 
-NGINX --> MCP :
-HTTP proxy_pass\nstreamable-http MCP
+User --> ENTRA : Login + MFA
 
-' =====================
-' OAUTH FLOW
-' =====================
+ENTRA --> User : OAuth Callback
 
-MCP --> USER :
-302 Redirect\n/login
+User --> OPENWEB : OAuth Response
 
-USER --> ENTRA :
-OAuth Login + MFA
+OPENWEB --> NGINX : Authenticated MCP Calls
 
-ENTRA --> USER :
-Redirect callback\nhttps://openweb.company.com/callback
+NGINX --> MCP : MCP Requests
 
-USER --> OPENWEB :
-OAuth callback
+MCP --> GRAPH : Graph API Calls
 
-OPENWEB --> NGINX :
-Authenticated MCP calls
+GRAPH --> MCP : Mail / Calendar Data
 
-NGINX --> MCP :
-Bearer Token MCP Request
+MCP --> OPENWEB : Tool Results
 
-' =====================
-' GRAPH FLOW
-' =====================
+OPENWEB --> VLLM : Context Injection
 
-MCP --> GRAPH :
-Microsoft Graph API\nMail.Read\nCalendars.Read
+VLLM --> OPENWEB : Final Response
 
-GRAPH --> MCP :
-Emails / Calendar / Sites
-
-MCP --> OPENWEB :
-Tool Results
-
-OPENWEB --> VLLM :
-Tool Response Context
-
-VLLM --> OPENWEB :
-Final Answer
-
-OPENWEB --> USER :
-Chat Response
-
-' =====================
-' NOTES
-' =====================
+OPENWEB --> User : Chat Response
 
 note right of MCP
-- Internal only
-- No public Internet exposure
-- OAuth handled server-side
-- Scoped Graph permissions
+Internal MCP server
+Streamable HTTP
+Scoped permissions
 end note
 
 note bottom of VLLM
 Local inference only
-No company data leaves infra
-end note
-
-note right of ENTRA
-Conditional Access
-MFA
-Device Compliance
-Enterprise SSO
+No external LLM APIs
 end note
 
 @enduml
