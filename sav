@@ -1,2 +1,59 @@
-hola, si tenemos algunos servicios que van por dns, si quieres escribe la petición a it.support@medgaz.com con el nombre que tiene que tener y si puedes la guía o donde indique como funciona con la api de Microsoft para ver como podemos adaptarlo
- 
+Hola,
+
+Estamos montando una integración interna de IA corporativa usando Microsoft Graph + MCP (Model Context Protocol) para acceso controlado a Outlook y Calendario desde una interfaz interna de chat.
+
+Necesitamos únicamente un DNS corporativo HTTPS que apunte al servidor interno:
+
+* 192.168.2.15
+
+La idea es:
+
+Usuario
+→ Open WebUI
+→ DNS HTTPS corporativo
+→ NGINX reverse proxy
+→ MCP Server (10.10.10.104:3000)
+→ Microsoft Graph
+
+El reverse proxy nginx se encargará de reenviar tráfico internamente hacia:
+
+* [http://10.10.10.104:3000](http://10.10.10.104:3000)
+
+Necesitaríamos:
+
+1. Un hostname interno tipo:
+
+   * mcp.medgaz.local
+     o
+   * mcp.medgaz.com
+
+2. Certificado TLS válido para ese hostname.
+
+3. Que el hostname resuelva a:
+
+   * 192.168.2.15
+
+El servicio utiliza OAuth 2.1 con Microsoft Entra ID y Microsoft Graph, por lo que Microsoft requiere HTTPS para los callbacks OAuth.
+
+Permisos Microsoft Graph utilizados:
+
+* User.Read
+* Mail.Read
+* Calendars.Read
+
+Documentación técnica:
+
+* [https://learn.microsoft.com/en-us/entra/identity-platform/v2-oauth2-auth-code-flow](https://learn.microsoft.com/en-us/entra/identity-platform/v2-oauth2-auth-code-flow)
+* [https://learn.microsoft.com/en-us/graph/overview](https://learn.microsoft.com/en-us/graph/overview)
+* [https://modelcontextprotocol.io/introduction](https://modelcontextprotocol.io/introduction)
+
+También hemos detectado una policy de Conditional Access que bloquea Linux:
+
+* “All - Users - Conditional Access - Block Operating System”
+
+Probablemente necesitaremos excluir esta aplicación OAuth:
+
+* Outlook MCP LLM
+* App ID: d76fd0b7-8260-442c-8ab3-1983c64f8622
+
+Gracias.
