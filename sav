@@ -1,58 +1,120 @@
 @startuml
-title MCP + OpenWeb + OAuth Architecture
+title Enterprise MCP + OpenWebUI + vLLM + Microsoft OAuth
 
-' === CLIENT ===
-node "Cliente (Usuario)\n192.168.1.x\n internet" {
+skinparam backgroundColor #ffffff
+skinparam componentStyle rectangle
+skinparam shadowing false
+skinparam ArrowColor #2b2b2b
+skinparam packageStyle rectangle
+
+actor "Usuario\nBrowser corporativo" as USER
+
+package "Red Interna Empresa (192.168.2.0/24)" {
+
+  node "Open WebUI\n192.168.2.15:8080" as OPENWEB
+
+  node "vLLM Server\nLLM local" as VLLM
+
+  node "NGINX Reverse Proxy\n192.168.2.15:443\nHTTPS + OAuth Callback" as NGINX
 }
 
-' === INTERNAL NETWORK ===
-node "Red Interna Empresa\n192.168.2.0/24\n in Internet" {
+package "Red Servicios / DMZ (10.10.10.0/24)" {
 
-  node "OpenWeb\n192.168.2.15:8080" as OPENWEB
-  
-  node "NGINX Proxy\n192.168.2.15:443 (HTTPS)\n→ 3001 interno" as NGINX
+  node "MS-365 MCP Server\n10.10.10.104:3000\nStreamable HTTP MCP" as MCP
 }
 
-' === EXTERNAL NETWORK ===
-node "Red Internet\n10.10.10.0/24" {
+cloud "Microsoft Entra ID\nOAuth 2.1" as ENTRA
 
-  node "MCP Server\n10.10.10.104:3000\n Internet" as MCP
+cloud "Microsoft Graph API\nOutlook / Calendar / SharePoint" as GRAPH
 
-}
+' =====================
+' USER FLOW
+' =====================
 
-' === MICROSOFT CLOUD ===
-cloud "Microsoft OAuth / Graph API\nlogin.microsoftonline.com" as MS
+USER --> OPENWEB :
+HTTPS\nChat UI
 
-' ==== FLOWS ====
+OPENWEB --> VLLM :
+OpenAI-compatible API\nTool Calling
 
-' 1. Usuario abre OpenWeb
-Cliente --> OPENWEB : HTTP\nOpen UI
+VLLM --> OPENWEB :
+Tool Request
 
-' 2. OpenWeb llama MCP vía proxy
-OPENWEB --> NGINX : HTTPS /mcp
+' =====================
+' MCP FLOW
+' =====================
 
-NGINX --> MCP : HTTP proxy_pass
+OPENWEB --> NGINX :
+HTTPS /mcp
 
-' 3. OAuth start (browser)
-Cliente --> NGINX : HTTPS /authorize
+NGINX --> MCP :
+HTTP proxy_pass\nstreamable-http MCP
 
-NGINX --> MCP : /authorize
+' =====================
+' OAUTH FLOW
+' =====================
 
-' 4. MCP redirige a Microsoft
-MCP --> Cliente : 302 Redirect\n→ login.microsoftonline.com
+MCP --> USER :
+302 Redirect\n/login
 
-Cliente --> MS : Login + Consent
+USER --> ENTRA :
+OAuth Login + MFA
 
-' 5. Microsoft devuelve al callback
-MS --> Cliente : Redirect\n→ 192.168.2.15:8080/callback
+ENTRA --> USER :
+Redirect callback\nhttps://openweb.company.com/callback
 
-Cliente --> OPENWEB : OAuth callback
+USER --> OPENWEB :
+OAuth callback
 
-' 6. OpenWeb usa MCP ya autenticado
-OPENWEB --> NGINX : /mcp API calls
+OPENWEB --> NGINX :
+Authenticated MCP calls
 
-NGINX --> MCP
+NGINX --> MCP :
+Bearer Token MCP Request
 
-MCP --> MS : Graph API (Internet)
+' =====================
+' GRAPH FLOW
+' =====================
+
+MCP --> GRAPH :
+Microsoft Graph API\nMail.Read\nCalendars.Read
+
+GRAPH --> MCP :
+Emails / Calendar / Sites
+
+MCP --> OPENWEB :
+Tool Results
+
+OPENWEB --> VLLM :
+Tool Response Context
+
+VLLM --> OPENWEB :
+Final Answer
+
+OPENWEB --> USER :
+Chat Response
+
+' =====================
+' NOTES
+' =====================
+
+note right of MCP
+- Internal only
+- No public Internet exposure
+- OAuth handled server-side
+- Scoped Graph permissions
+end note
+
+note bottom of VLLM
+Local inference only
+No company data leaves infra
+end note
+
+note right of ENTRA
+Conditional Access
+MFA
+Device Compliance
+Enterprise SSO
+end note
 
 @enduml
