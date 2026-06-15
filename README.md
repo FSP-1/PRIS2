@@ -1,95 +1,182 @@
-Perfecto 👌 este agente que has puesto es MUCHO mejor estructurado que el anterior que hicimos — de hecho ya está en el modelo correcto estilo OpenAI agent 🔥
-Te explico:
+Sí, el análisis que te han dado es bastante acertado para muchos despliegues de **Qwen2.5-Coder** en vLLM.
 
-🧠 ✅ QUÉ HACE ESTE AGENTE (BIEN HECHO)
-Este ya es un agent loop estándar real, igual que OpenAI:
-✅ Flujo
+La clave es esta:
 
-Envías prompt
-Modelo responde:
+### Caso 1: `tool_calls` reales (ideal)
 
-con texto → fin ✅
-con tool_calls → ejecuta ✅
+Si tu servidor devuelve:
 
+```python
+msg.tool_calls = [...]
+```
 
-Ejecutas la función real
-Devuelves resultado al modelo
-Loop continúa 🔁
+entonces usa el flujo OpenAI estándar y no hagas parsing manual.
 
+```python
+if msg.tool_calls:
+    ...
+```
 
-💥 PERO hay un detalle clave en TU caso
-👉 esto SOLO funciona si:
-msg.tool_calls != None ✅
+### Caso 2: Qwen genera XML o texto
 
+Algunas combinaciones de:
 
-⚠️ Problema real con Qwen2.5
-Qwen 2.5 normalmente:
-❌ NO devuelve tool_calls estructurados
-✅ devuelve texto/XML/JSON
-👉 por eso antes estabas usando XML parsing
+* Qwen2.5-Coder
+* AWQ
+* vLLM
+* chat template personalizado
 
-🔥 ENTONCES ESTE AGENTE… ¿FUNCIONA?
-✅ Con estos modelos:
+acaban generando:
 
-Llama 3.1 FP16 ✅
-Hermes ✅
-Mistral con template ✅
+```xml
+<tool_call>
+<function=write_file>
+...
+</function>
+</tool_call>
+```
 
-👉 funciona PERFECTO
+o JSON textual:
 
-❌ Con Qwen2.5 AWQ
-👉 pasa esto:
-msg.tool_calls = None ❌
-msg.content = texto ❌
+```json
+{
+  "name": "write_file",
+  "arguments": {
+    "path": "test.py"
+  }
+}
+```
 
-💥 el agente nunca ejecuta tools
+y:
 
-✅ SOLUCIÓN PARA HACERLO FUNCIONAR CON QWEN
-Tienes 2 caminos:
+```python
+msg.tool_calls == None
+```
 
-🥇 OPCIÓN A — Mantener este código (recomendado)
-👉 pero añadir fallback XML (lo que hicimos antes)
+En ese escenario, el fallback tiene mucho sentido.
 
-🔧 Añade esto después de:
-Pythonmsg = response.choices[0].messageShow more lines
+---
 
-✅ PATCH (CLAVE)
-Python# 🔥 fallback cuando Qwen no usa tool_callsif not msg.tool_calls and msg.content:    import re    match = re.search(        r"<tool_call>\s*<function=(.*?)>(.*?)</function>\s*</tool_call>",        msg.content,        re.DOTALL    )    if match:        function_name = match.group(1)        body = match.group(2)        params = {}        param_matches = re.findall(            r"<parameter=(.*?)>\s*(.*?)\s*</parameter>",            body,            re.DOTALL        )        for name, value in param_matches:            params[name.strip()] = value.strip()        print(f"\n[XML TOOL DETECTADO] {function_name}")        print(params)        result = TOOLS_IMPL[function_name](**params)        messages.append({            "role": "assistant",            "content": msg.content        })        messages.append({            "role": "tool",            "content": json.dumps(result)        })        continueShow less
+## Yo lo haría más genérico
 
-✅ Resultado
-Ahora tu agente soporta:
+En lugar de buscar solo XML:
 
+```python
+if msg.tool_calls:
+    ejecutar_toolcalls()
+else:
+    intentar_parsear_xml()
+    intentar_parsear_json()
+    si_no_hay_tools():
+        responder_usuario()
+```
 
+Algo así:
 
+```python
+def extract_tool_call(msg):
 
-TipoFuncionatool_calls OpenAI✅XML (Qwen)✅texto normal✅
-💥 hybrid agent (lo mejor posible en local)
+    if msg.tool_calls:
+        return ("openai", msg.tool_calls)
 
-🥇 OPCIÓN B — Cambiar a modelo compatible
-Si usas:
-Llama-3.1-8B-Instruct (FP16)
+    if not msg.content:
+        return None
 
-👉 NO necesitas XML
-👉 este código funciona sin tocar nada
+    # XML
+    xml = parse_xml_tool(msg.content)
+    if xml:
+        return ("xml", xml)
 
-🔥 MEJORA MUY IMPORTANTE (te recomiendo hacerlo)
-Añade forcing al system prompt:
+    # JSON
+    js = parse_json_tool(msg.content)
+    if js:
+        return ("json", js)
 
-🔧 CAMBIA esto:
-PythonSYSTEM_PROMPT = """You are a coding agent...."""Show more lines
+    return None
+```
 
-✅ por esto:
-PythonSYSTEM_PROMPT = """You are a coding agent.RULES:- You MUST use tools for any filesystem or command task- Do NOT explain how to do things manually- Always call tools until the task is completed- Never answer with steps if a tool is availableYou can:- Create directories- Create files- Modify files- Read files- Execute commands"""Show more lines
+Así el agente no depende de un único formato.
 
-✅ RESULTADO FINAL
-Con ese agente + fix tendrás:
-✅ loop real
-✅ ejecución automática
-✅ compatible con Qwen
-✅ fallback robusto
-✅ comportamiento tipo Copilot agent
+---
 
-🧠 CONCLUSIÓN
-Tu código ya es:
-👉 ✅ arquitectura correcta
-👉 ❌ faltaba compatibilidad con Qwen
+## Para Qwen2.5-Coder específicamente
+
+Antes de implementar el fallback, haz esta prueba:
+
+```python
+print(response.choices[0].message)
+```
+
+y mira qué recibes exactamente.
+
+### Si ves
+
+```python
+tool_calls=[
+ ...
+]
+```
+
+perfecto.
+
+### Si ves
+
+```python
+content='<tool_call>...'
+```
+
+usa el parser XML.
+
+### Si ves
+
+```python
+content='{"name":"write_file"...}'
+```
+
+usa parser JSON.
+
+---
+
+## Mi recomendación actual
+
+Para un agente local con Qwen2.5-Coder AWQ:
+
+1. Mantén el bucle OpenAI estándar.
+2. Añade fallback XML.
+3. Añade fallback JSON.
+4. Restringe todo a un workspace seguro.
+5. Registra logs de todas las herramientas.
+
+Por ejemplo:
+
+```python
+print(f"[TOOL] {fn_name}")
+print(args)
+```
+
+porque cuando el agente empieza a crear y modificar archivos, los logs son imprescindibles para depurar.
+
+### Prompt recomendado
+
+```text
+You are an autonomous coding agent.
+
+Rules:
+
+- Always use tools for filesystem operations.
+- Always use tools for shell commands.
+- Never describe changes that can be performed.
+- Perform them using tools.
+- Read files before modifying them.
+- Continue calling tools until the task is fully completed.
+
+Available capabilities:
+
+- Read files
+- Write files
+- Create directories
+- List directories
+- Execute commands
+```
+
+Con eso tendrás un agente híbrido bastante robusto que funciona tanto si Qwen2.5 devuelve `tool_calls` nativos como si decide emitir XML/JSON dentro del texto.
