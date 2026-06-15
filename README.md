@@ -1,270 +1,95 @@
-import json
-import os
-import subprocess
-from pathlib import Path
+Perfecto 👌 este agente que has puesto es MUCHO mejor estructurado que el anterior que hicimos — de hecho ya está en el modelo correcto estilo OpenAI agent 🔥
+Te explico:
 
-from openai import OpenAI
+🧠 ✅ QUÉ HACE ESTE AGENTE (BIEN HECHO)
+Este ya es un agent loop estándar real, igual que OpenAI:
+✅ Flujo
 
+Envías prompt
+Modelo responde:
 
-# =========================
-# CONFIG
-# =========================
-
-client = OpenAI(
-    base_url="http://192.168.2.45:8000/v1",
-    api_key="dummy"
-)
-
-MODEL = "qwen2.5-coder"
+con texto → fin ✅
+con tool_calls → ejecuta ✅
 
 
-# =========================
-# TOOLS
-# =========================
-
-def create_directory(path):
-    os.makedirs(path, exist_ok=True)
-
-    return {
-        "success": True,
-        "path": path
-    }
+Ejecutas la función real
+Devuelves resultado al modelo
+Loop continúa 🔁
 
 
-def write_file(path, content):
-
-    Path(path).parent.mkdir(
-        parents=True,
-        exist_ok=True
-    )
-
-    with open(path, "w", encoding="utf-8") as f:
-        f.write(content)
-
-    return {
-        "success": True,
-        "path": path
-    }
+💥 PERO hay un detalle clave en TU caso
+👉 esto SOLO funciona si:
+msg.tool_calls != None ✅
 
 
-def read_file(path):
+⚠️ Problema real con Qwen2.5
+Qwen 2.5 normalmente:
+❌ NO devuelve tool_calls estructurados
+✅ devuelve texto/XML/JSON
+👉 por eso antes estabas usando XML parsing
 
-    with open(path, "r", encoding="utf-8") as f:
-        content = f.read()
+🔥 ENTONCES ESTE AGENTE… ¿FUNCIONA?
+✅ Con estos modelos:
 
-    return {
-        "content": content
-    }
+Llama 3.1 FP16 ✅
+Hermes ✅
+Mistral con template ✅
 
+👉 funciona PERFECTO
 
-def list_directory(path="."):
+❌ Con Qwen2.5 AWQ
+👉 pasa esto:
+msg.tool_calls = None ❌
+msg.content = texto ❌
 
-    files = []
+💥 el agente nunca ejecuta tools
 
-    for root, dirs, filenames in os.walk(path):
+✅ SOLUCIÓN PARA HACERLO FUNCIONAR CON QWEN
+Tienes 2 caminos:
 
-        for name in filenames:
-            files.append(
-                os.path.join(root, name)
-            )
+🥇 OPCIÓN A — Mantener este código (recomendado)
+👉 pero añadir fallback XML (lo que hicimos antes)
 
-    return {
-        "files": files[:500]
-    }
+🔧 Añade esto después de:
+Pythonmsg = response.choices[0].messageShow more lines
 
+✅ PATCH (CLAVE)
+Python# 🔥 fallback cuando Qwen no usa tool_callsif not msg.tool_calls and msg.content:    import re    match = re.search(        r"<tool_call>\s*<function=(.*?)>(.*?)</function>\s*</tool_call>",        msg.content,        re.DOTALL    )    if match:        function_name = match.group(1)        body = match.group(2)        params = {}        param_matches = re.findall(            r"<parameter=(.*?)>\s*(.*?)\s*</parameter>",            body,            re.DOTALL        )        for name, value in param_matches:            params[name.strip()] = value.strip()        print(f"\n[XML TOOL DETECTADO] {function_name}")        print(params)        result = TOOLS_IMPL[function_name](**params)        messages.append({            "role": "assistant",            "content": msg.content        })        messages.append({            "role": "tool",            "content": json.dumps(result)        })        continueShow less
 
-def execute_command(command):
-
-    result = subprocess.run(
-        command,
-        shell=True,
-        capture_output=True,
-        text=True
-    )
-
-    return {
-        "stdout": result.stdout,
-        "stderr": result.stderr,
-        "returncode": result.returncode
-    }
+✅ Resultado
+Ahora tu agente soporta:
 
 
-TOOLS_IMPL = {
-    "create_directory": create_directory,
-    "write_file": write_file,
-    "read_file": read_file,
-    "list_directory": list_directory,
-    "execute_command": execute_command
-}
 
 
-TOOLS_SCHEMA = [
-    {
-        "type": "function",
-        "function": {
-            "name": "create_directory",
-            "description": "Create a directory",
-            "parameters": {
-                "type": "object",
-                "properties": {
-                    "path": {
-                        "type": "string"
-                    }
-                },
-                "required": ["path"]
-            }
-        }
-    },
-    {
-        "type": "function",
-        "function": {
-            "name": "write_file",
-            "description": "Write file content",
-            "parameters": {
-                "type": "object",
-                "properties": {
-                    "path": {
-                        "type": "string"
-                    },
-                    "content": {
-                        "type": "string"
-                    }
-                },
-                "required": [
-                    "path",
-                    "content"
-                ]
-            }
-        }
-    },
-    {
-        "type": "function",
-        "function": {
-            "name": "read_file",
-            "description": "Read a file",
-            "parameters": {
-                "type": "object",
-                "properties": {
-                    "path": {
-                        "type": "string"
-                    }
-                },
-                "required": ["path"]
-            }
-        }
-    },
-    {
-        "type": "function",
-        "function": {
-            "name": "list_directory",
-            "description": "List project files",
-            "parameters": {
-                "type": "object",
-                "properties": {
-                    "path": {
-                        "type": "string"
-                    }
-                }
-            }
-        }
-    },
-    {
-        "type": "function",
-        "function": {
-            "name": "execute_command",
-            "description": "Execute terminal command",
-            "parameters": {
-                "type": "object",
-                "properties": {
-                    "command": {
-                        "type": "string"
-                    }
-                },
-                "required": ["command"]
-            }
-        }
-    }
-]
+TipoFuncionatool_calls OpenAI✅XML (Qwen)✅texto normal✅
+💥 hybrid agent (lo mejor posible en local)
 
+🥇 OPCIÓN B — Cambiar a modelo compatible
+Si usas:
+Llama-3.1-8B-Instruct (FP16)
 
-SYSTEM_PROMPT = """
-You are a coding agent.
+👉 NO necesitas XML
+👉 este código funciona sin tocar nada
 
-You can:
+🔥 MEJORA MUY IMPORTANTE (te recomiendo hacerlo)
+Añade forcing al system prompt:
 
-- Create directories
-- Create files
-- Modify files
-- Read files
-- Execute commands
+🔧 CAMBIA esto:
+PythonSYSTEM_PROMPT = """You are a coding agent...."""Show more lines
 
-Before modifying files inspect the project.
+✅ por esto:
+PythonSYSTEM_PROMPT = """You are a coding agent.RULES:- You MUST use tools for any filesystem or command task- Do NOT explain how to do things manually- Always call tools until the task is completed- Never answer with steps if a tool is availableYou can:- Create directories- Create files- Modify files- Read files- Execute commands"""Show more lines
 
-Continue using tools until the task is completed.
-"""
+✅ RESULTADO FINAL
+Con ese agente + fix tendrás:
+✅ loop real
+✅ ejecución automática
+✅ compatible con Qwen
+✅ fallback robusto
+✅ comportamiento tipo Copilot agent
 
-
-def run_agent(user_prompt):
-
-    messages = [
-        {
-            "role": "system",
-            "content": SYSTEM_PROMPT
-        },
-        {
-            "role": "user",
-            "content": user_prompt
-        }
-    ]
-
-    while True:
-
-        response = client.chat.completions.create(
-            model=MODEL,
-            messages=messages,
-            tools=TOOLS_SCHEMA,
-            tool_choice="auto",
-            temperature=0
-        )
-
-        msg = response.choices[0].message
-
-        if not msg.tool_calls:
-
-            print("\nAGENTE:")
-            print(msg.content)
-
-            return
-
-        messages.append(msg)
-
-        for call in msg.tool_calls:
-
-            fn_name = call.function.name
-
-            args = json.loads(
-                call.function.arguments
-            )
-
-            print(f"\nEjecutando: {fn_name}")
-            print(args)
-
-            result = TOOLS_IMPL[fn_name](**args)
-
-            messages.append({
-                "role": "tool",
-                "tool_call_id": call.id,
-                "content": json.dumps(result)
-            })
-
-
-if __name__ == "__main__":
-
-    while True:
-
-        prompt = input("\nTú > ")
-
-        if prompt.lower() in ["exit", "quit"]:
-            break
-
-        run_agent(prompt)
+🧠 CONCLUSIÓN
+Tu código ya es:
+👉 ✅ arquitectura correcta
+👉 ❌ faltaba compatibilidad con Qwen
