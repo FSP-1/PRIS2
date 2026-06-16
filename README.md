@@ -1,3 +1,36 @@
+
+curl http://192.168.2.45:8080/v1/chat/completions \
+-H "Content-Type: application/json" \
+-d '{
+  "model":"qwen-coder",
+  "messages":[
+    {
+      "role":"user",
+      "content":"Use create_file to create hello.md"
+    }
+  ],
+  "tools":[
+    {
+      "type":"function",
+      "function":{
+        "name":"create_file",
+        "description":"Create a file",
+        "parameters":{
+          "type":"object",
+          "properties":{
+            "path":{
+              "type":"string"
+            }
+          }
+        }
+      }
+    }
+  ],
+  "tool_choice":"auto"
+}'
+
+
+
 {# =========================
    SAFE CONTENT RENDERING
    ========================= #}
