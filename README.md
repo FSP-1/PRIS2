@@ -444,3 +444,213 @@ c:\Users\ext_serper\Documents\Stuff\Scripts\README.md
 
 Assistant
 The file `README.md` has been created in the specified location with the provided content.
+----------------------------------------------------------------------------------------------------------
+
+
+el plan seria hacer entonces un proxy Sí — **esto es exactamente lo que deberías hacer** ✅  
+Un proxy es la **solución profesional** para integrar Copilot + vLLM.
+
+***
+
+# 🔥 Por qué un proxy es la mejor opción
+
+Tu problema principal ahora mismo:
+
+* Copilot ❌ no envía `max_tokens`
+* Copilot ❌ envía prompts enormes
+* Copilot ❌ no adapta bien a Llama
+
+👉 Un proxy te permite:
+
+✅ Forzar parámetros (max\_tokens, temperature…)  
+✅ Limitar contexto (`truncate`)  
+✅ Debuggear peticiones  
+✅ Añadir reglas inteligentes
+
+***
+
+# 🧠 Arquitectura
+
+```
+VS Code Copilot
+        ↓
+   (tu proxy)
+        ↓
+     vLLM server
+```
+
+***
+
+# 🚀 Qué debe hacer tu proxy
+
+Cuando recibe:
+
+```json
+{
+  "model": "llama3.1",
+  "messages": [...]
+}
+```
+
+Debe transformarlo a:
+
+```json
+{
+  "model": "llama3.1",
+  "messages": [...],
+  "max_tokens": 1024,
+  "temperature": 0.3,
+  "top_p": 0.9
+}
+```
+
+***
+
+# ✅ Proxy mínimo en Python (FastAPI)
+
+Te dejo uno funcional listo:
+
+```python
+from fastapi import FastAPI, Request
+import httpx
+
+app = FastAPI()
+
+VLLM_URL = "http://127.0.0.1:8080/v1/chat/completions"
+
+@app.post("/v1/chat/completions")
+async def proxy_chat(request: Request):
+    body = await request.json()
+
+    # 🔥 FORZAR PARÁMETROS
+    body["max_tokens"] = 1024
+    body["temperature"] = 0.3
+
+    # ⚠️ limitar mensajes si son gigantes
+    if "messages" in body:
+        body["messages"] = body["messages"][-20:]  # últimos N msgs
+
+    async with httpx.AsyncClient() as client:
+        response = await client.post(VLLM_URL, json=body)
+        return response.json()
+```
+
+***
+
+# ✅ Cómo usarlo
+
+1. Lanza el proxy:
+
+```bash
+uvicorn proxy:app --host 0.0.0.0 --port 9000
+```
+
+2. Cambia tu config en Copilot:
+
+```json
+"url": "http://192.168.2.45:9000/v1"
+```
+
+👉 LISTO ✅
+
+***
+
+# 🔥 Mejoras MUY recomendadas
+
+***
+
+## ✅ 1. Limitar tokens reales (IMPORTANTE)
+
+Añade recorte inteligente:
+
+```python
+MAX_INPUT_CHARS = 20000
+
+def trim_messages(messages):
+    total = ""
+    trimmed = []
+    
+    for msg in reversed(messages):
+        total += msg.get("content", "")
+        if len(total) > MAX_INPUT_CHARS:
+            break
+        trimmed.insert(0, msg)
+
+    return trimmed
+```
+
+Y:
+
+```python
+body["messages"] = trim_messages(body["messages"])
+```
+
+***
+
+## ✅ 2. Logging (clave para debug)
+
+```python
+print("TOKENS INPUT:", len(str(body)))
+```
+
+***
+
+## ✅ 3. Forzar stop tokens (evita respuestas cortadas raras)
+
+```python
+body["stop"] = ["</s>"]
+```
+
+***
+
+## ✅ 4. Ajuste agresivo (modo Copilot-like)
+
+```python
+body["temperature"] = 0.2
+body["top_p"] = 0.95
+body["max_tokens"] = 1500
+```
+
+***
+
+# 💡 BONUS (muy potente)
+
+Puedes incluso:
+
+✅ Detectar prompts largos → subir max\_tokens  
+✅ Detectar código → bajar temperatura  
+✅ Detectar tools → ajustar respuesta
+
+***
+
+# 🧠 Resultado final
+
+Con proxy:
+
+✅ respuestas largas ✔  
+✅ contexto controlado ✔  
+✅ sin respuestas de 1 línea ✔  
+✅ Copilot usable de verdad ✔
+
+***
+
+# ✅ TL;DR
+
+👉 Sí — haz proxy ✅  
+👉 Es la solución correcta
+
+Y añade mínimo:
+
+```
+max_tokens = 1024
+```
+
+***
+
+Si quieres, te hago una versión PRO del proxy con:
+
+* conteo real de tokens (tiktoken / llama tokenizer)
+* batching
+* metrics tipo Grafana
+
+(te dejaría Copilot funcionando casi como GPT‑4 👍)
