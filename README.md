@@ -1,246 +1,178 @@
-sergio) sergio@sergio:~$ nvidia-smi -q
+Lo que describes ya no suena a un problema de tool calling.
 
-==============NVSMI LOG==============
+Suena a que **Copilot Agent está usando un prompt completamente distinto al de Open WebUI**. VS Code Agent añade herramientas, contexto del workspace, instrucciones del agente y restricciones propias antes de enviar la petición al modelo. ([Visual Studio Code][1])
 
-Timestamp                                              : Tue Jun 16 08:28:26 2026
-Driver Version                                         : 595.71.05
-CUDA Version                                           : 13.2
+Y hay una pista enorme:
 
-Attached GPUs                                          : 1
-GPU 00000000:01:00.0
-    Product Name                                       : NVIDIA GeForce RTX 5080
-    Product Brand                                      : GeForce
-    Product Architecture                               : Blackwell
-    Display Mode                                       : Requested functionality has been deprecated
-    Display Attached                                   : No
-    Display Active                                     : Disabled
-    Persistence Mode                                   : Disabled
-    Addressing Mode                                    : HMM
-    MIG Mode
-        Current                                        : N/A
-        Pending                                        : N/A
-    Accounting Mode                                    : Disabled
-    Accounting Mode Buffer Size                        : 4000
-    Driver Model
-        Current                                        : N/A
-        Pending                                        : N/A
-    Serial Number                                      : 0
-    GPU UUID                                           : GPU-4757a2df-6ff3-5cbe-dc61-9cff152fbd6b
-    GPU PDI                                            : 0x362fc11fa65313e2
-    Minor Number                                       : 0
-    VBIOS Version                                      : 98.03.6C.00.11
-    MultiGPU Board                                     : No
-    Board ID                                           : 0x100
-    Board Part Number                                  : N/A
-    GPU Part Number                                    : 2C02-400-A1
-    FRU Part Number                                    : N/A
-    Platform Info
-        Chassis Serial Number                          : 
-        Slot Number                                    : 0
-        Tray Index                                     : 0
-        Host ID                                        : 1
-        Peer Type                                      : Direct Connected
-        Module Id                                      : 1
-        GPU Fabric GUID                                : 0x0000000000000000
-    Inforom Version
-        Image Version                                  : G005.0000.98.01
-        OEM Object                                     : 2.1
-        ECC Object                                     : N/A
-        Power Management Object                        : N/A
-    Inforom BBX Object Flush
-        Latest Timestamp                               : N/A
-        Latest Duration                                : N/A
-    GPU Operation Mode
-        Current                                        : N/A
-        Pending                                        : N/A
-    GPU C2C Mode                                       : Disabled
-    GPU Virtualization Mode
-        Virtualization Mode                            : None
-        Host VGPU Mode                                 : N/A
-        vGPU Heterogeneous Mode                        : N/A
-    GPU Recovery Action                                : None
-    GSP Firmware Version                               : 595.71.05
-    IBMNPU
-        Relaxed Ordering Mode                          : N/A
-    PCI
-        Bus                                            : 0x01
-        Device                                         : 0x00
-        Domain                                         : 0x0000
-        Base Classcode                                 : 0x3
-        Sub Classcode                                  : 0x0
-        Device Id                                      : 0x2C0210DE
-        Bus Id                                         : 00000000:01:00.0
-        Sub System Id                                  : 0x53151462
-        GPU Link Info
-            PCIe Generation
-                Max                                    : 4
-                Current                                : 1
-                Device Current                         : 1
-                Device Max                             : 5
-                Host Max                               : 4
-            Link Width
-                Max                                    : 16x
-                Current                                : 16x
-        Bridge Chip
-            Type                                       : N/A
-            Firmware                                   : N/A
-        Replays Since Reset                            : 0
-        Replay Number Rollovers                        : 0
-        Tx Throughput                                  : 719 KB/s
-        Rx Throughput                                  : 544 KB/s
-        Atomic Caps Outbound                           : N/A
-        Atomic Caps Inbound                            : FETCHADD_32 FETCHADD_64 SWAP_32 SWAP_64 CAS_32 CAS_64 
-    Fan Speed                                          : 0 %
-    Performance State                                  : P8
-    Clocks Event Reasons
-        Idle                                           : Not Active
-        Applications Clocks Setting                    : Not Active
-        SW Power Cap                                   : Not Active
-        HW Slowdown                                    : Not Active
-            HW Thermal Slowdown                        : Not Active
-            HW Power Brake Slowdown                    : Not Active
-        Sync Boost                                     : Not Active
-        SW Thermal Slowdown                            : Not Active
-        Display Clock Setting                          : Not Active
-    Clocks Event Reasons Counters
-        SW Power Capping                               : 219196 us
-        Sync Boost                                     : 0 us
-        SW Thermal Slowdown                            : 0 us
-        HW Thermal Slowdown                            : 0 us
-        HW Power Braking                               : 0 us
-    Sparse Operation Mode                              : N/A
-    FB Memory Usage
-        Total                                          : 16303 MiB
-        Reserved                                       : 462 MiB
-        Used                                           : 2 MiB
-        Free                                           : 15841 MiB
-    BAR1 Memory Usage
-        Total                                          : 16384 MiB
-        Used                                           : 1 MiB
-        Free                                           : 16383 MiB
-    Conf Compute Protected Memory Usage
-        Total                                          : 0 MiB
-        Used                                           : 0 MiB
-        Free                                           : 0 MiB
-    Compute Mode                                       : Default
-    Utilization
-        GPU                                            : 0 %
-        Memory                                         : 0 %
-        Encoder                                        : 0 %
-        Decoder                                        : 0 %
-        JPEG                                           : 0 %
-        OFA                                            : 0 %
-    Encoder Stats
-        Active Sessions                                : 0
-        Average FPS                                    : 0
-        Average Latency                                : 0
-    FBC Stats
-        Active Sessions                                : 0
-        Average FPS                                    : 0
-        Average Latency                                : 0
-    DRAM Encryption Mode
-        Current                                        : Disabled
-        Pending                                        : Disabled
-    ECC Mode
-        Current                                        : N/A
-        Pending                                        : N/A
-    ECC Errors
-        Volatile
-            SRAM Correctable                           : N/A
-            SRAM Uncorrectable Parity                  : N/A
-            SRAM Uncorrectable SEC-DED                 : N/A
-            DRAM Correctable                           : N/A
-            DRAM Uncorrectable                         : N/A
-        Aggregate
-            SRAM Correctable                           : N/A
-            SRAM Uncorrectable Parity                  : N/A
-            SRAM Uncorrectable SEC-DED                 : N/A
-            DRAM Correctable                           : N/A
-            DRAM Uncorrectable                         : N/A
-            SRAM Threshold Exceeded                    : N/A
-        Aggregate Uncorrectable SRAM Sources
-            SRAM L2                                    : N/A
-            SRAM SM                                    : N/A
-            SRAM Microcontroller                       : N/A
-            SRAM PCIE                                  : N/A
-            SRAM Other                                 : N/A
-        Channel Repair Pending                         : No
-        TPC Repair Pending                             : No
-        Unrepairable Memory                            : N/A
-    Retired Pages
-        Single Bit ECC                                 : N/A
-        Double Bit ECC                                 : N/A
-        Pending Page Blacklist                         : N/A
-    Remapped Rows                                      : N/A
-    Temperature
-        GPU Current Temp                               : 46 C
-        GPU T.Limit Temp                               : 42 C
-        GPU Shutdown T.Limit Temp                      : -5 C
-        GPU Slowdown T.Limit Temp                      : -2 C
-        GPU Max Operating T.Limit Temp                 : 0 C
-        GPU Target Temperature                         : N/A
-        Memory Current Temp                            : N/A
-        Memory Max Operating T.Limit Temp              : N/A
-    GPU Power Readings
-        Average Power Draw                             : 10.26 W
-        Instantaneous Power Draw                       : 10.33 W
-        Current Power Limit                            : 360.00 W
-        Requested Power Limit                          : 360.00 W
-        Default Power Limit                            : 360.00 W
-        Min Power Limit                                : 250.00 W
-        Max Power Limit                                : 400.00 W
-    GPU Memory Power Readings 
-        Average Power Draw                             : N/A
-        Instantaneous Power Draw                       : N/A
-    Module Power Readings
-        Average Power Draw                             : N/A
-        Instantaneous Power Draw                       : N/A
-        Current Power Limit                            : N/A
-        Requested Power Limit                          : N/A
-        Default Power Limit                            : N/A
-        Min Power Limit                                : N/A
-        Max Power Limit                                : N/A
-    Power Smoothing                                    : N/A
-    Workload Power Profiles
-        Requested Profiles                             : N/A
-        Enforced Profiles                              : N/A
-    EDPp Multiplier                                    : N/A
-    Clocks
-        Graphics                                       : 195 MHz
-        SM                                             : 195 MHz
-        Memory                                         : 405 MHz
-        Video                                          : 600 MHz
-    Applications Clocks
-        Graphics                                       : Requested functionality has been deprecated
-        Memory                                         : Requested functionality has been deprecated
-    Default Applications Clocks
-        Graphics                                       : Requested functionality has been deprecated
-        Memory                                         : Requested functionality has been deprecated
-    Deferred Clocks
-        Memory                                         : N/A
-    Max Clocks
-        Graphics                                       : 3105 MHz
-        SM                                             : 3105 MHz
-        Memory                                         : 15001 MHz
-        Video                                          : 3090 MHz
-    Max Customer Boost Clocks
-        Graphics                                       : N/A
-    Clock Policy
-        Auto Boost                                     : N/A
-        Auto Boost Default                             : N/A
-    Fabric
-        State                                          : N/A
-        Status                                         : N/A
-        CliqueId                                       : N/A
-        ClusterUUID                                    : N/A
-        Health
-            Summary                                    : N/A
-            Bandwidth                                  : N/A
-            Route Recovery in progress                 : N/A
-            Route Unhealthy                            : N/A
-            Access Timeout Recovery                    : N/A
-            Incorrect Configuration                    : N/A
-            Partition Assigned                         : N/A
-    Processes                                          : None
-    Capabilities
-        EGM                                            : disabled
+> ahora hace las tools, pero responde muy breve y hace el mínimo
+
+Eso es exactamente el comportamiento de un modelo cuando:
+
+```text
+temperature = 0
+top_p bajo
+prompt de agente muy restrictivo
+```
+
+o cuando el modelo está recibiendo instrucciones tipo:
+
+```text
+Use tools.
+Be concise.
+Do not explain.
+```
+
+que Copilot Agent suele inyectar en su flujo. ([Visual Studio Code][2])
+
+---
+
+### La prueba que te recomiendo
+
+Abre los logs de Copilot:
+
+```text
+Developer: Set Log Level
+→ Trace
+```
+
+y luego:
+
+```text
+GitHub Copilot Chat: Show Logs
+```
+
+o:
+
+```text
+Developer Tools
+→ Network
+```
+
+para capturar exactamente qué está enviando VS Code a tu endpoint.
+
+Quiero ver si la petición lleva algo parecido a:
+
+```json
+{
+  "temperature": 0,
+  "top_p": 1,
+  "max_tokens": 512
+}
+```
+
+o incluso un system prompt enorme.
+
+---
+
+### Otra cosa importante
+
+Cuando usas Open WebUI probablemente haces:
+
+```text
+"Implementa una API REST completa..."
+```
+
+y el modelo tiene libertad.
+
+Pero Copilot Agent funciona más así:
+
+```text
+Plan
+↓
+tool
+↓
+edit file
+↓
+tool
+↓
+stop
+```
+
+Está diseñado para hacer cambios incrementales. ([Visual Studio Code][1])
+
+Por eso un modelo que en Open WebUI genera 300 líneas puede en Copilot decidir:
+
+```python
+def hello():
+    pass
+```
+
+y parar.
+
+---
+
+### Mi sospecha real ahora
+
+Después de todo lo que has contado:
+
+* Gemma E2B + llama-server → bien.
+* Llama 3.1 + vLLM → tools funcionan pero respuestas pobres.
+* Open WebUI → excelente.
+
+Yo sospecho que **el template que has puesto para que funcionen las tools está demasiado agresivo**.
+
+Muchos templates de tool calling incluyen reglas tipo:
+
+```text
+Always use tools.
+Be concise.
+Only perform requested action.
+```
+
+y eso hace que el modelo deje de razonar y simplemente haga el mínimo.
+
+---
+
+### Qué haría yo
+
+Mantén:
+
+```bash
+--enable-auto-tool-choice
+--tool-call-parser llama3_json
+```
+
+pero modifica el template para NO incluir cosas como:
+
+```text
+Be concise
+Only answer with tool calls
+Keep responses short
+```
+
+y añade algo parecido a:
+
+```text
+When coding:
+- Produce complete implementations
+- Verify modifications
+- Read relevant files before editing
+- Do not stop after the first change
+- Continue until the task is fully completed
+```
+
+---
+
+### Mi apuesta
+
+No creo que tengas un problema de:
+
+```text
+vLLM
+Marlin
+AWQ
+RTX 5080
+```
+
+Creo que tienes un problema de:
+
+```text
+Copilot Agent Prompt
++
+Tool Template
+```
+
+Porque el hecho de que Open WebUI vaya "fenomenal" demuestra que el modelo sí sabe programar. Lo que ha cambiado es el contexto y las instrucciones que recibe. Y cuando las tools empezaron a funcionar, el comportamiento pasó de "simular herramientas" a "hacer lo mínimo", lo que suele indicar que el modelo está obedeciendo demasiado estrictamente el prompt del agente.
+
+[1]: https://code.visualstudio.com/docs/copilot/agents/overview?utm_source=chatgpt.com "Using agents in Visual Studio Code"
+[2]: https://code.visualstudio.com/blogs/2025/02/24/introducing-copilot-agent-mode?utm_source=chatgpt.com "Introducing GitHub Copilot agent mode (preview)"
