@@ -3,26 +3,32 @@ $body = @{
     messages = @(
         @{
             role = "user"
-            content = "Replace foo by bar in test.txt"
+            content = "Use create_file to create hello.md"
         }
     )
     tools = @(
         @{
             type = "function"
             function = @{
-                name = "replace_string_in_file"
-                description = "Replace text in a file"
+                name = "create_file"
+                description = "Create a file"
                 parameters = @{
                     type = "object"
                     properties = @{
-                        path = @{ type = "string" }
-                        old = @{ type = "string" }
-                        new = @{ type = "string" }
+                        path = @{
+                            type = "string"
+                        }
                     }
-                    required = @("path","old","new")
+                    required = @("path")
                 }
             }
         }
     )
     tool_choice = "auto"
 } | ConvertTo-Json -Depth 20
+
+Invoke-RestMethod `
+    -Uri "http://192.168.2.45:8080/v1/chat/completions" `
+    -Method Post `
+    -ContentType "application/json" `
+    -Body $body
