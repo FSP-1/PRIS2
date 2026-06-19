@@ -38,7 +38,100 @@ sergiomcp@sergiomcp:/usr/local/share/ca-certificates$ dig @192.168.1.131 mcp.par
 
 ;; AUTHORITY SECTION:
 partenon.medgaz.com.    3600    IN      SOA     mgdc2.partenon.medgaz.com. hostmaster. 826427 900 600 86400 3600
+server {
+    listen 80;
+    listen [::]:80;
 
+    server_name mcp.partenon.medgaz.com;
+
+    return 301 https://$host$request_uri;
+}
+
+server {
+    listen 443 ssl http2;
+    listen [::]:443 ssl http2;
+
+    server_name mcp.partenon.medgaz.com;
+
+    ssl_certificate     /etc/nginx/ssl/fullchain.pem;
+    ssl_certificate_key /etc/nginx/ssl/mcp.partenon.medgaz.com.key;
+
+    ssl_protocols TLSv1.2 TLSv1.3;
+
+    #
+    # OPEN WEBUI
+    #
+    location / {
+        proxy_pass http://127.0.0.1:8080;
+
+        proxy_http_version 1.1;
+
+        proxy_set_header Host $host;
+        proxy_set_header X-Forwarded-Proto https;
+        proxy_set_header X-Forwarded-Host $host;
+        proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+        proxy_set_header X-Real-IP $remote_addr;
+
+        proxy_set_header Upgrade $http_upgrade;
+        proxy_set_header Connection "upgrade";
+    }
+
+    #
+    # MCP ENDPOINT
+    #
+    location /mcp {
+        proxy_pass http://127.0.0.1:3000/mcp;
+
+        proxy_http_version 1.1;
+
+        proxy_set_header Host $host;
+        proxy_set_header X-Forwarded-Proto https;
+        proxy_set_header X-Forwarded-Host $host;
+        proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+        proxy_set_header X-Real-IP $remote_addr;
+
+        proxy_set_header Upgrade $http_upgrade;
+        proxy_set_header Connection "upgrade";
+    }
+
+    #
+    # OAuth Discovery
+    #
+    location /.well-known {
+        proxy_pass http://127.0.0.1:3000/.well-known;
+
+        proxy_set_header Host $host;
+        proxy_set_header X-Forwarded-Proto https;
+        proxy_set_header X-Forwarded-Host $host;
+    }
+
+    #
+    # OAuth endpoints
+    #
+    location /authorize {
+        proxy_pass http://127.0.0.1:3000/authorize;
+
+        proxy_set_header Host $host;
+        proxy_set_header X-Forwarded-Proto https;
+        proxy_set_header X-Forwarded-Host $host;
+    }
+
+    location /token {
+        proxy_pass http://127.0.0.1:3000/token;
+
+        proxy_set_header Host $host;
+        proxy_set_header X-Forwarded-Proto https;
+        proxy_set_header X-Forwarded-Host $host;
+    }
+
+    location /register {
+        proxy_pass http://127.0.0.1:3000/register;
+
+        proxy_set_header Host $host;
+        proxy_set_header X-Forwarded-Proto https;
+        proxy_set_header X-Forwarded-Host $host;
+    }
+}
 ;; Query time: 0 msec
 ;; SERVER: 192.168.1.131#53(192.168.1.131) (UDP)
 ;; WHEN: Fri Jun 19 08:54:38 UTC 2026
