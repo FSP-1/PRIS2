@@ -1,39 +1,7 @@
-
-    
-    python3 -c "
+sergiomcp@sergiomcp:/usr/local/share/ca-certificates$ curl https://mcp.partenon.medgaz.com/.well-known/oauth-authorization-server
+{"issuer":"https://mcp.partenon.medgaz.com","authorization_endpoint":"https://mcp.partenon.medgaz.com/authorize","token_endpoint":"https://mcp.partenon.medgaz.com/token","response_types_supported":["code"],"response_modes_supported":["query"],"grant_types_supported":["authorization_code","refresh_token"],"token_endpoint_auth_metsergiomcp@sergiomcp:/usr/local/share/ca-certificates$    python3 -c ""scopes_supported":["Mail.ReadWrite","Mail.Send","User.Read"],"registration_endpoint":"https://mcp.partenon.medgaz.com/register"}sergiomcp@sergiomcp:/usr/local/share/ca-certificates$    python3 -c "
 import requests
 print(requests.get('https://mcp.partenon.medgaz.com/.well-known/oauth-authorization-server').text)
 "
-    
-    
-    
-    metadata = await self.load_server_metadata()
-               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-  File "/home/sergiomcp/.venv/lib/python3.12/site-packages/authlib/integrations/base_client/async_app.py", line 79, in load_server_metadata
-    resp = await client.request(
-           ^^^^^^^^^^^^^^^^^^^^^
-  File "/home/sergiomcp/.venv/lib/python3.12/site-packages/authlib/integrations/httpx_client/oauth2_client.py", line 119, in request
-    return await super().request(method, url, auth=auth, **kwargs)
-           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-  File "/home/sergiomcp/.venv/lib/python3.12/site-packages/httpx/_client.py", line 1540, in request
-    return await self.send(request, auth=auth, follow_redirects=follow_redirects)
-           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-  File "/home/sergiomcp/.venv/lib/python3.12/site-packages/httpx/_client.py", line 1629, in send
-    response = await self._send_handling_auth(
-               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-  File "/home/sergiomcp/.venv/lib/python3.12/site-packages/httpx/_client.py", line 1657, in _send_handling_auth
-    response = await self._send_handling_redirects(
-               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-  File "/home/sergiomcp/.venv/lib/python3.12/site-packages/httpx/_client.py", line 1694, in _send_handling_redirects
-    response = await self._send_single_request(request)
-               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-  File "/home/sergiomcp/.venv/lib/python3.12/site-packages/httpx/_client.py", line 1730, in _send_single_request
-    response = await transport.handle_async_request(request)
-               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-  File "/home/sergiomcp/.venv/lib/python3.12/site-packages/httpx/_transports/default.py", line 393, in handle_async_request
-    with map_httpcore_exceptions():
-  File "/usr/lib/python3.12/contextlib.py", line 158, in __exit__
-    self.gen.throw(value)
-  File "/home/sergiomcp/.venv/lib/python3.12/site-packages/httpx/_transports/default.py", line 118, in map_httpcore_exceptions
-    raise mapped_exc(message) from exc
-httpx.ConnectError: [SSL: CERTIFICATE_VERIFY_FAILED] certificate verify failed: self-signed certificate in certificate chain (_ssl.c:1000)
+{"issuer":"https://mcp.partenon.medgaz.com","authorization_endpoint":"https://mcp.partenon.medgaz.com/authorize","token_endpoint":"https://mcp.partenon.medgaz.com/token","response_types_supported":["code"],"response_modes_supported":["query"],"grant_types_supported":["authorization_code","refresh_token"],"token_endpoint_auth_methods_supported":["none"],"code_challenge_methods_supported":["S256"],"scopes_supported":["Mail.ReadWrite","Mail.Send","User.Read"],"registration_endpoint":"https://mcp.partenon.medgaz.com/register"}
+sergiomcp@sergiomcp:/usr/local/share/ca-certificates$ 
