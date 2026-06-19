@@ -1,75 +1,53 @@
-C:\Users\ext_serper>ipconfig /all
+sergiomcp@sergiomcp:/usr/local/share/ca-certificates$ getent hosts mcp.partenon.medgaz.com
+192.168.2.33    mcp.partenon.medgaz.com
+sergiomcp@sergiomcp:/usr/local/share/ca-certificates$ dig @192.168.1.130 mcp.partenon.medgaz.com
 
-Windows IP Configuration
+; <<>> DiG 9.18.39-0ubuntu0.24.04.5-Ubuntu <<>> @192.168.1.130 mcp.partenon.medgaz.com
+; (1 server found)
+;; global options: +cmd
+;; Got answer:
+;; ->>HEADER<<- opcode: QUERY, status: NXDOMAIN, id: 18389
+;; flags: qr aa rd ra; QUERY: 1, ANSWER: 0, AUTHORITY: 1, ADDITIONAL: 1
 
-   Host Name . . . . . . . . . . . . : MGSPDT0102
-   Primary Dns Suffix  . . . . . . . : PARTENON.MEDGAZ.COM
-   Node Type . . . . . . . . . . . . : Hybrid
-   IP Routing Enabled. . . . . . . . : No
-   WINS Proxy Enabled. . . . . . . . : No
-   DNS Suffix Search List. . . . . . : PARTENON.MEDGAZ.COM
+;; OPT PSEUDOSECTION:
+; EDNS: version: 0, flags:; udp: 4000
+;; QUESTION SECTION:
+;mcp.partenon.medgaz.com.       IN      A
 
-Ethernet adapter Ethernet 2:
+;; AUTHORITY SECTION:
+partenon.medgaz.com.    3600    IN      SOA     mgdc3.partenon.medgaz.com. hostmaster. 826427 900 600 86400 3600
 
-   Media State . . . . . . . . . . . : Media disconnected
-   Connection-specific DNS Suffix  . : PARTENON.MEDGAZ.COM
-   Description . . . . . . . . . . . : Realtek USB GbE Family Controller
-   Physical Address. . . . . . . . . : B4-E9-B8-6E-02-5F
-   DHCP Enabled. . . . . . . . . . . : Yes
-   Autoconfiguration Enabled . . . . : Yes
+;; Query time: 0 msec
+;; SERVER: 192.168.1.130#53(192.168.1.130) (UDP)
+;; WHEN: Fri Jun 19 08:54:30 UTC 2026
+;; MSG SIZE  rcvd: 123
 
-Wireless LAN adapter Wi-Fi:
+sergiomcp@sergiomcp:/usr/local/share/ca-certificates$ dig @192.168.1.131 mcp.partenon.medgaz.com
 
-   Media State . . . . . . . . . . . : Media disconnected
-   Connection-specific DNS Suffix  . : localdomain
-   Description . . . . . . . . . . . : Intel(R) Wi-Fi 6E AX211 160MHz
-   Physical Address. . . . . . . . . : C0-A8-10-07-AA-0D
-   DHCP Enabled. . . . . . . . . . . : Yes
-   Autoconfiguration Enabled . . . . : Yes
+; <<>> DiG 9.18.39-0ubuntu0.24.04.5-Ubuntu <<>> @192.168.1.131 mcp.partenon.medgaz.com
+; (1 server found)
+;; global options: +cmd
+;; Got answer:
+;; ->>HEADER<<- opcode: QUERY, status: NXDOMAIN, id: 6160
+;; flags: qr aa rd ra; QUERY: 1, ANSWER: 0, AUTHORITY: 1, ADDITIONAL: 1
 
-Wireless LAN adapter Local Area Connection* 1:
+;; OPT PSEUDOSECTION:
+; EDNS: version: 0, flags:; udp: 4000
+;; QUESTION SECTION:
+;mcp.partenon.medgaz.com.       IN      A
 
-   Media State . . . . . . . . . . . : Media disconnected
-   Connection-specific DNS Suffix  . :
-   Description . . . . . . . . . . . : Microsoft Wi-Fi Direct Virtual Adapter
-   Physical Address. . . . . . . . . : C0-A8-10-07-AA-0E
-   DHCP Enabled. . . . . . . . . . . : Yes
-   Autoconfiguration Enabled . . . . : Yes
+;; AUTHORITY SECTION:
+partenon.medgaz.com.    3600    IN      SOA     mgdc2.partenon.medgaz.com. hostmaster. 826427 900 600 86400 3600
 
-Wireless LAN adapter Local Area Connection* 2:
+;; Query time: 0 msec
+;; SERVER: 192.168.1.131#53(192.168.1.131) (UDP)
+;; WHEN: Fri Jun 19 08:54:38 UTC 2026
+;; MSG SIZE  rcvd: 123
 
-   Media State . . . . . . . . . . . : Media disconnected
-   Connection-specific DNS Suffix  . :
-   Description . . . . . . . . . . . : Microsoft Wi-Fi Direct Virtual Adapter #2
-   Physical Address. . . . . . . . . : C2-A8-10-07-AA-0D
-   DHCP Enabled. . . . . . . . . . . : Yes
-   Autoconfiguration Enabled . . . . : Yes
+sergiomcp@sergiomcp:/usr/local/share/ca-certificates$ nslookup mcp.partenon.medgaz.com 192.168.1.131
+Server:         192.168.1.131
+Address:        192.168.1.131#53
 
-Ethernet adapter Ethernet:
+** server can't find mcp.partenon.medgaz.com: NXDOMAIN
 
-   Connection-specific DNS Suffix  . : PARTENON.MEDGAZ.COM
-   Description . . . . . . . . . . . : Intel(R) Ethernet Connection (17) I219-LM
-   Physical Address. . . . . . . . . : E8-CF-83-90-B9-ED
-   DHCP Enabled. . . . . . . . . . . : Yes
-   Autoconfiguration Enabled . . . . : Yes
-   Link-local IPv6 Address . . . . . : fe80::77bd:29f4:7fb4:5eda%5(Preferred)
-   IPv4 Address. . . . . . . . . . . : 192.168.1.24(Preferred)
-   Subnet Mask . . . . . . . . . . . : 255.255.255.128
-   Lease Obtained. . . . . . . . . . : viernes, 19 de junio de 2026 07:51:41
-   Lease Expires . . . . . . . . . . : viernes, 19 de junio de 2026 14:22:00
-   Default Gateway . . . . . . . . . : 192.168.1.1
-   DHCP Server . . . . . . . . . . . : 192.168.1.131
-   DHCPv6 IAID . . . . . . . . . . . : 115920771
-   DHCPv6 Client DUID. . . . . . . . : 00-01-00-01-30-0C-53-D5-E8-CF-83-90-B9-ED
-   DNS Servers . . . . . . . . . . . : 192.168.1.130
-                                       192.168.1.131
-   NetBIOS over Tcpip. . . . . . . . : Enabled
-
-Ethernet adapter Bluetooth Network Connection:
-
-   Media State . . . . . . . . . . . : Media disconnected
-   Connection-specific DNS Suffix  . :
-   Description . . . . . . . . . . . : Bluetooth Device (Personal Area Network)
-   Physical Address. . . . . . . . . : C0-A8-10-07-AA-11
-   DHCP Enabled. . . . . . . . . . . : Yes
-   Autoconfiguration Enabled . . . . : Yes
+sergiomcp@sergiomcp:/usr/local/share/ca-certificates$ 
