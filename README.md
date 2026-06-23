@@ -1,18 +1,200 @@
-no, ya que esto se lo estamos dando al model params system promt de open web ui, ya que este no es un agente y no sabe interpretar bien las tools calls de este servidor mcp, si fuese claude no haria falta. COn eso en mente, sabes como uno puede hacer un agente como claude para que interprete tools bien? la arquitectura es asi, un vllm server con vllm serve /home/sergio/custom-models/Qwen3.5-4B-AWQ  \
-  --served-model-name qwen3.5 \
-  --host 192.168.2.45 \
-  --port 8080 \
-  --quantization marlin \
-  --gpu-memory-utilization 0.9 \
-  --enable-auto-tool-choice \
-  --tool-call-parser qwen3_coder \
-  --max-model-len 84768 \
-  --reasoning-parser qwen3 \
-  --trust-remote-code \
-  --max-num-batched-tokens 8192 \
-  --generation-config vllm \
-  --override-generation-config '{"temperature":0.2,"top_k": 20,"top_p":0.9,"repetition_penalty":1.15}' , conectado a open web ui para usar el modelo, y en open web ui se pone 
-  Manage Tool Servers y el reverse proxy https://mcp.partenon.medgaz.com/mcp
+  Manage Tool Sí. Antes de escribir el runtime definitivo, necesito ver **dos cosas reales de tu entorno**:
+
+## 1. Qué devuelve vLLM cuando hace tool calling
+
+Haz una llamada directa a vLLM:
+
+```bash
+curl http://192.168.2.45:8080/v1/chat/completions \
+-H "Content-Type: application/json" \
+-d '{
+  "model":"qwen3.5",
+  "messages":[
+    {
+      "role":"user",
+      "content":"List my Outlook folders"
+    }
+  ],
+  "tools":[
+    {
+      "type":"function",
+      "function":{
+        "name":"test_tool",
+        "description":"Test tool",
+        "parameters":{
+          "type":"object",
+          "properties":{
+            "name":{"type":"string"}
+          }
+        }
+      }
+    }
+  ],
+  "tool_choice":"auto"
+}'
+```
+
+Y pásame la respuesta completa.
+
+Quiero ver si Qwen devuelve:
+
+```json
+{
+  "tool_calls":[...]
+}
+```
+
+o
+
+```json
+{
+  "content":"<tool_call>..."
+}
+```
+
+o formato Qwen específico.
+
+---
+
+## 2. Qué devuelve el MCP en tools/list
+
+El MCP habla JSON-RPC.
+
+Haz:
+
+```bash
+curl https://mcp.partenon.medgaz.com/mcp \
+-H "Content-Type: application/json" \
+-d '{
+  "jsonrpc":"2.0",
+  "id":1,
+  "method":"tools/list"
+}'
+```
+
+o si requiere sesión MCP, prueba desde Inspector.
+
+Y pásame el JSON.
+
+Quiero ver algo parecido a:
+
+```json
+{
+  "result": {
+    "tools": [
+      {
+        "name":"ms-365-list-mail-folders",
+        "description":"...",
+        "inputSchema":{...}
+      }
+    ]
+  }
+}
+```
+
+---
+
+## 3. Qué devuelve una ejecución real
+
+Por ejemplo:
+
+```json
+{
+  "jsonrpc":"2.0",
+  "id":1,
+  "method":"tools/call",
+  "params":{
+    "name":"ms-365-list-mail-folders",
+    "arguments":{}
+  }
+}
+```
+
+Pásame la respuesta.
+
+---
+
+## Lo ideal
+
+Si me das:
+
+### A
+
+Respuesta de:
+
+```bash
+/v1/chat/completions
+```
+
+con tool calling.
+
+### B
+
+Respuesta de:
+
+```json
+tools/list
+```
+
+### C
+
+Respuesta de:
+
+```json
+tools/call
+```
+
+Entonces puedo hacerte un runtime mucho mejor:
+
+```text
+arranque
+↓
+tools/list
+↓
+convierte schemas MCP → OpenAI tools
+↓
+Qwen ve todas las tools reales
+↓
+tool_call
+↓
+tools/call
+↓
+resultado
+↓
+loop
+```
+
+Es decir, no una función genérica:
+
+```text
+mcp_tool(tool_name,args)
+```
+
+sino:
+
+```text
+ms-365-list-mail-folders
+ms-365-list-calendar-events
+ms-365-create-draft-message
+...
+```
+
+exactamente igual que Claude Desktop.
+
+Y además te podría decir si Open WebUI realmente sobra en el loop y conviene poner:
+
+```text
+Open WebUI
+↓
+Agent Runtime
+↓
+vLLM
+↓
+MCP
+```
+
+o si se puede aprovechar el soporte MCP nativo que ya trae Open WebUI.
+ y el reverse proxy https://mcp.partenon.medgaz.com/mcp
   dime donde y como haria esto
   Created 5 todos
 
